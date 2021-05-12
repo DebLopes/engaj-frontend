@@ -2,11 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FiPower, FiPlus, FiMinus } from "react-icons/fi";
 import { BiCookie } from "react-icons/bi";
-import GoalDescription from '../RegistrationGoals/GoalDescription';
-import LevelUpModal from "../../components/LevelUpModal";
+import InputsForRegistration from '../../components/InputsForRegistration';
+import TaskCompletedModal from "../../components/TaskCompletedModal";
 import { Form } from "@unform/web";
 import * as Yup from "yup";
-
+import { useAuth } from '../../hooks/auth';
 import RewardsService from "../../services/RewardsService";
 
 import getValidationErrors from '../../utils/getValidationErrors';
@@ -21,25 +21,41 @@ import {
   Menu,
   Award,
   CreateAward,
+  Profile
 } from "./styles";
 import Button from "../../components/Button";
+import { Default } from 'react-spinners-css';
 
 const RegistrationAward = () => {
+  const { signOut, user, updateUser } = useAuth();
+
   const [isLevelUpModalOpen, setIsLevelUpModalOpen] = useState(false);
   const [createAward, setCreateAward] = useState(false);
   const [rewards, setRewards] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const formRef = useRef(null);
 
   useEffect(() => {
     const listReward = async () => {
-      const response = await  RewardsService.ListReward().then((r) => r.data);
+      setLoading(true);
+      const response = await RewardsService.ListReward().then((r) => r.data);
       setRewards(response)
+      setLoading(false);
     }
 
     listReward();
   }, [])
 
+  const handlerRecue = async (id) => {
+    try {
+      const response = await RewardsService.RecueAward(id).then((r) => r.data);
+      updateUser(response);
+      //  console.log(response)
+      //  setLoading(true);
+
+    } catch (err) { console.log(err) }
+  }
 
   const handleAward = async (data) => {
 
@@ -50,17 +66,16 @@ const RegistrationAward = () => {
         description: Yup.string()
           .required('Titulo obrigatório')
           .min(6, 'No mínimo 6 dígitos'),
-          value: Yup.number()
+        value: Yup.number()
           .typeError('Informe um número. Ex: 5')
           .min(1, 'Valor minimo é 1')
       });
-
 
       await schema.validate(data, {
         abortEarly: false,
       });
 
-     var response =  await RewardsService.CreateReward(data.description, data.value).then((r) => r.data);
+      var response = await RewardsService.CreateReward(data.description, data.value).then((r) => r.data);
 
       setCreateAward(false);
 
@@ -79,15 +94,28 @@ const RegistrationAward = () => {
     <Container>
       <Header>
         <HeaderContent>
+          <Profile>
+            <img src={user.avatar_url} alt={user.name}/>
+            <div>
+              <span>Bem vindo,</span>
+              <strong>{user.name}</strong>
+              <strong style={{ justifySelf: "center", display: "flex", alignItems: "flex-end", marginTop: "10px" }}>
+                <BiCookie size={24} color="#ff9000" />
+                <strong style={{ paddingLeft: "8px" }}>
+                  {user.balance}
+                </strong>
+              </strong>
+            </div>
+          </Profile>
           <Menu>
             <Link to="/dashboard">
               <strong>Metas</strong>
             </Link>
-            <Link to="/registrationGoals">
-              <strong>Criar nova Meta</strong>
+            <Link to="/registrationAward">
+              <strong>Recompensas</strong>
             </Link>
           </Menu>
-          <button type="button">
+          <button type="button" onClick={signOut}>
             <FiPower />
           </button>
         </HeaderContent>
@@ -114,10 +142,9 @@ const RegistrationAward = () => {
                 )}
             </div>
 
-            {rewards.length === 0 && <p>Nenhum recompensas cadastrada</p>}
             {createAward ? (
               <Form ref={formRef} key="1" onSubmit={handleAward}>
-                <GoalDescription
+                <InputsForRegistration
                   nameFirstInput="description"
                   placeholderFirstInput="Descrição recompensa"
                   nameSecondInput="value"
@@ -130,22 +157,23 @@ const RegistrationAward = () => {
                   </Button>
               </Form>
             ) : (
-              rewards.map((reward) => (
+
+                rewards.map((reward) => (
                   <Award key={reward.id}>
                     <span>{reward.description}</span>
                     <p>
                       <BiCookie size={20} />
                       {reward.value}
                     </p>
-                    <button type="submit">Resgatar recompensa</button>
+                    <button type="submit" onClick={() => handlerRecue(reward.id)}>Resgatar recompensa</button>
                   </Award>
                 ))
               )}
+            {rewards.length === 0 && <p>Nenhum recompensas cadastrada</p>}
           </Section>
           {isLevelUpModalOpen && (
-            <LevelUpModal
-              level={2}
-              closeLevelUpModal={() => setIsLevelUpModalOpen(false)}
+            <TaskCompletedModal
+              closeTaskCompletedModal={() => setIsLevelUpModalOpen(false)}
             />
           )}
         </Schedule>

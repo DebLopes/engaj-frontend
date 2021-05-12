@@ -7,7 +7,7 @@ import {
 import { useAuth } from '../hooks/auth';
 
 
-const Route = ({
+const Route  = ({
   isPrivate = false,
   component: Component,
   ...rest

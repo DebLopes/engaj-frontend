@@ -16,5 +16,10 @@ class RewardsService {
 		return response;
 	}
 
+	async RecueAward(id){
+		const response = await api.patch(`rewards/${id}`);
+		return response;
+	}
+
 }
 export default new RewardsService();

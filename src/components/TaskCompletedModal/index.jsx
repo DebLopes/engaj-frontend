@@ -1,8 +1,8 @@
 import {Modal} from './styles.js';
 import { FaTrophy } from 'react-icons/fa';
 
-const LevelUpModal = props => {
-  const { level, closeLevelUpModal } = props;
+const TaskCompletedModal = props => {
+  const { closeTaskCompletedModal } = props;
 
   return (
     <Modal>
@@ -10,9 +10,9 @@ const LevelUpModal = props => {
         <header><FaTrophy/></header>
 
         <strong>Parabéns</strong>
-        <p>Você alcançou um novo level.</p>
+        <p>Você alcançou um novo level.</p>                               
 
-        <button type="button" onClick={closeLevelUpModal}>
+        <button type="button" onClick={closeTaskCompletedModal}>
           <img src="/icons/close.svg" />
         </button>
       </div>
@@ -20,4 +20,4 @@ const LevelUpModal = props => {
   );
 }
 
-export default LevelUpModal;
+export default TaskCompletedModal;

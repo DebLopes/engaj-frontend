@@ -81,6 +81,7 @@ export const AnimationContainer = styled.div`
     &:hover {
       color: ${shade(0.2, SECONDARY_COLOR)
     }
+  }
 `;
 
 export const Background = styled.div`

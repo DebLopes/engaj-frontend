@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useRef } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { format, addDays } from "date-fns";
+import { format } from "date-fns";
 import ptBR from "date-fns/locale/pt-BR";
 import { FiPower } from "react-icons/fi";
 import DayPicker, { DateUtils } from "react-day-picker";
@@ -9,6 +9,8 @@ import Actions from "./Actions";
 import { Form } from "@unform/web";
 import * as Yup from 'yup';
 import GoalsService from "../../services/GoalsService";
+import { useAuth } from '../../hooks/auth';
+import { BiCookie } from "react-icons/bi";
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
@@ -22,18 +24,14 @@ import {
   Calendar,
   Menu,
 } from "./styles";
-import GoalDescription from "./GoalDescription";
+import InputsForRegistration from "../../components/InputsForRegistration";
 import Button from "../../components/Button";
 import { v4 as uuidv4 } from "uuid";
 
-const user = {
-  name: "Débora",
-  avatar_url:
-    "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-mulher-no-icone-redondo_24640-14048.jpg",
-};
-
 
 const RegistrationGoals = () => {
+  const { signOut, user } = useAuth();
+
   const formRef = useRef(null);
 
   const history = useHistory();
@@ -44,7 +42,7 @@ const RegistrationGoals = () => {
   const [removeFieldsOfTask, setRemoveFieldsOfTask] = useState({ remove: false, id: '' });
 
   const [from, setFrom] = useState(new Date());
-  const [to, setTo] = useState(from.addDays(2));
+  const [to, setTo] = useState(new Date());
 
   const selectedDateAsText = useMemo(() => {
     return format(from, "'Dia' dd 'de' MMMM  - cccc", {
@@ -141,6 +139,12 @@ const RegistrationGoals = () => {
               <Link to="/profile">
                 <strong>{user.name}</strong>
               </Link>
+              <strong style={{ justifySelf: "center", display: "flex", alignItems: "flex-end", marginTop: "10px" }}>
+                <BiCookie size={24} color="#ff9000" />
+                <strong style={{ paddingLeft: "8px" }}>
+                  {user.balance}
+                </strong>
+              </strong>
             </div>
           </Profile>
           <Menu>
@@ -151,7 +155,7 @@ const RegistrationGoals = () => {
               <strong>Recompensas</strong>
             </Link>
           </Menu>
-          <button type="button">
+          <button type="button" onClick={signOut}>
             <FiPower />
           </button>
         </HeaderContent>
@@ -166,7 +170,7 @@ const RegistrationGoals = () => {
             <span>{selectedDateAsTextEnd}</span>
           </p>
           <Form ref={formRef} key="1" onSubmit={handleGoal}>
-            <GoalDescription
+            <InputsForRegistration
               nameFirstInput="titleGoal"
               placeholderFirstInput="Titulo Meta"
               nameSecondInput="points"

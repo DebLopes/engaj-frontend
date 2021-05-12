@@ -1,22 +1,7 @@
 import React, { createContext, useCallback, useContext, useState } from 'react';
-
 import api from '../services/api';
 
-// interface AuthState {
-//   token: string;
-//   user: object;
-// }
-
-// interface SignInCredentials {
-//   email: string;
-//   password: string;
-// }
-
-// interface AuthContextData {
-//   user: object;
-//   signIn(credentials: SignInCredentials): Promise<void>;
-//   signOut(): void;
-// }
+import profile from "../assets/profile.png";
 
 const AuthContext = createContext({});
 
@@ -40,9 +25,9 @@ const AuthProvider = ({ children }) => {
       password,
     });
 
-    console.log(response.data)
     const { token, user } = response.data;
 
+    user.avatar_url = profile;
     localStorage.setItem('@Engaj:token', token);
     localStorage.setItem('@Engaj:user', JSON.stringify(user));
 
@@ -56,8 +41,21 @@ const AuthProvider = ({ children }) => {
     setData({});
   }, []);
 
+  const updateUser = useCallback(
+    (user) => {
+      localStorage.setItem('@Engaj:user', JSON.stringify(user));
+      user.avatar_url = profile;
+
+      setData({
+        token: data.token,
+        user,
+      });
+    },
+    [data.token],
+  );
+
   return (
-    <AuthContext.Provider value={{ user: data.user, signIn, signOut }}>
+    <AuthContext.Provider value={{ user: data.user, signIn, signOut, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

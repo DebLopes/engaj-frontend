@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useRef } from 'react';
 import { FiArrowLeft, FiUser, FiMail, FiLock } from 'react-icons/fi';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
@@ -20,7 +20,7 @@ const SignUp = () => {
   const { addToast } = useToast();
   const history = useHistory();
 
-  const handleSubmit = useCallback(
+  const handleSubmit =
     async (data) => {
       try {
         formRef.current?.setErrors({});
@@ -41,11 +41,12 @@ const SignUp = () => {
 
         history.push('/');
 
-        // addToast({
-        //   type: 'success',
-        //   title: 'Cadastro realizado!',
-        //   description: 'Você já pode fazer seu logon no Engaj!',
-        // });
+        addToast({
+          type: 'success',
+          title: 'Cadastro realizado!',
+          description: 'Você já pode fazer seu logon no Engaj!',
+        });
+        
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
@@ -55,15 +56,13 @@ const SignUp = () => {
           return;
         }
 
-        // addToast({
-        //   type: 'error',
-        //   title: 'Erro no cadastro',
-        //   description: 'Ocorreu um erro ao fazer cadastro, tente novamente.',
-        // });
+        addToast({
+          type: 'error',
+          title: 'Erro no cadastro',
+          description: 'Ocorreu um erro ao fazer cadastro, tente novamente.',
+        });
       }
-    },
-    [addToast, history],
-  );
+    };
 
   return (
     <Container>
@@ -84,13 +83,12 @@ const SignUp = () => {
               type="password"
               placeholder="Senha"
             />
-
             <Button type="submit">Cadastrar</Button>
           </Form>
 
           <Link to="/">
             <FiArrowLeft />
-            Voltar para logon
+            Voltar para login
           </Link>
         </AnimationContainer>
       </Content>

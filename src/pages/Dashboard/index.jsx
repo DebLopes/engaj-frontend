@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 
+import { useAuth } from '../../hooks/auth';
 import GoalsService from "../../services/GoalsService";
 
 import { Link } from "react-router-dom";
@@ -11,10 +12,11 @@ import {
   FiPlus,
   FiTrash2,
 } from "react-icons/fi";
-import LevelUpModal from "../../components/LevelUpModal";
-import Button from "../../components/Button";
-import { Form } from "@unform/web";
-import * as Yup from "yup";
+import TaskCompletedModal from "../../components/TaskCompletedModal";
+import { Default } from 'react-spinners-css';
+import Checkbox from '../../components/Checkbox';
+
+import { BiCookie } from "react-icons/bi";
 
 import {
   Container,
@@ -31,32 +33,50 @@ import {
 } from "./styles";
 
 
-const user = {
-  name: "Débora Silva Santos Lopes",
-  avatar_url:
-    "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-mulher-no-icone-redondo_24640-14048.jpg",
-};
-
-
 const Dashboard = () => {
+  const { signOut, user, updateUser } = useAuth();
 
   const [goals, setGoals] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const deleteGoal = async (id) => {
+    try {
+      setLoading(true);
+      await GoalsService.DeleteGoal(id);
+      const copyGoal = [...goals];
+      setGoals(copyGoal.filter(g => g.id !== id));
+      setLoading(false);
+
+    } catch (err) { console.log(err) }
+  }
+
 
   useEffect(() => {
     const listGoals = async () => {
+      setLoading(true);
+      setGoals([]);
       const response = await GoalsService.ListGoals().then((r) => r.data);
       setGoals(response)
+      setLoading(false);
     }
+    
+    if(loading) listGoals();
+  }, [loading])
 
-    listGoals();
-  }, [])
 
+  const [isTaskCompletedModalOpen, setTaskCompletedModalOpen] = useState(false);
 
-  const [isLevelUpModalOpen, setIsLevelUpModalOpen] = useState(false);
+  const handleCheck = async (id) => {
+    try {
+       const response = await GoalsService.UpdateTask(id).then((r) => r.data);
 
-  const handleCheck = (goal, id) => {
-    console.log(goal);
-    setIsLevelUpModalOpen(true);
+       
+      updateUser(response);
+      console.log(response)
+      setLoading(true);
+      
+    } catch (err) { console.log(err) }
+    //setTaskCompletedModalOpen(true);
   };
 
 
@@ -69,7 +89,7 @@ const Dashboard = () => {
         <div>
           <div style={{ width: `${percentToNextLevel}%` }} />
         </div>
-        <span> {currentExperience} %</span>
+        <span> {percentToNextLevel} %</span>
       </ProgressBar>
     );
   }
@@ -97,7 +117,7 @@ const Dashboard = () => {
               <strong>Recompensas</strong>
             </Link>
           </Menu>
-          <button type="button">
+          <button type="button" onClick={signOut}>
             <FiPower />
           </button>
         </HeaderContent>
@@ -105,7 +125,6 @@ const Dashboard = () => {
       <Content>
         <Schedule>
           <h1>Metas</h1>
-
           <Section>
             <div>
               <strong>{goals && goals.length} Metas</strong>
@@ -113,48 +132,53 @@ const Dashboard = () => {
                 <FiPlus /> Criar nova meta
               </Link>
             </div>
+            {loading ?
+              <div style={{
+                justifyContent: "center",
+                borderBottom: "none"
+              }}>
+                <Default color="#ff9000" size={200} />
+              </div>
+              :
+              <>
+                {goals.length === 0 && <p>Nenhum meta cadastrada</p>}
 
-            {goals.length === 0 && <p>Nenhum meta cadastrada</p>}
-
-            {goals.map((goal) => (
-              <Goals key={goal.id}>
-                {progressBar(goal.tasks && goal.tasks.filter(x => x.done).length, goal.tasks && goal.tasks.length)}
-                <GoalsTitle>
-                  <span>
-                    <FiFlag size={20} />
-                    {goal.title}
-                  </span>
-                  {dateTextEnd(goal.startDate, goal.endDate)}
-                  {/* <button>
-                    <FiEdit3 size={20} />
-                  </button> */}
-                  <button>
-                    <FiTrash2 size={20} />
-                  </button>
-                </GoalsTitle>
-
-                <p>{goal.description}</p>
-                <h6>Tarefas</h6>
-
-                {goal.tasks &&
-                  goal.tasks.map((task, index) => (
-                    <div>
-                      <input
-                        type="checkbox"
-                        disabled={task.done}
-                        checked={task.done || null}
-                        onChange={() => handleCheck(goal.id, task.id)}
-                      ></input>
-                      <strong> {`${index + 1} - ${task.description}`}</strong>
-                    </div>
-                  ))}
-              </Goals>
-            ))}
+                {goals.map((goal) => (
+                  <Goals key={goal.id}>
+                    {progressBar(goal.tasks && goal.tasks.filter(x => x.done).length, goal.tasks && goal.tasks.length)}
+                    <GoalsTitle>
+                      <span>
+                        <FiFlag size={20} />
+                        {goal.title}
+                      </span>
+                      {dateTextEnd(goal.startDate, goal.endDate)}
+                      <button onClick={() => deleteGoal(goal.id)}>
+                        <FiTrash2 size={20} />
+                      </button>
+                    </GoalsTitle>
+                    <p>{goal.description}</p>
+                    <h6>Tarefas</h6>
+                    {goal.tasks &&
+                      goal.tasks.map((task, index) => (
+                        <div>
+                          <label>
+                            <Checkbox
+                              disabled={task.done}
+                              checked={task.done}
+                              onChange={() => handleCheck(task.id)}
+                            />
+                            <span style={{ marginLeft: 8 }}>{task.description}</span>
+                          </label>
+                        </div>
+                      ))}
+                  </Goals>
+                ))}
+              </>
+            }
           </Section>
-          {isLevelUpModalOpen && (
-            <LevelUpModal
-              level={2}
-              closeLevelUpModal={() => setIsLevelUpModalOpen(false)}
+          {isTaskCompletedModalOpen && (
+            <TaskCompletedModal
+              closeTaskCompletedModal={() => setTaskCompletedModalOpen(false)}
             />
           )}
         </Schedule>
@@ -165,12 +189,17 @@ const Dashboard = () => {
               <strong>{user.name}</strong>
             </Link>
           </div>
-          <strong>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
-            eleifend nec velit varius pharetra. Vivamus at orci non nibh
-            sollicitudin aliquam. In hac habitasse platea dictumst. Nam
-            ullamcorper justo ac urna fringilla, a congue ipsum pharetra.
-          </strong>
+          <span style={{ display: "grid" }}>
+            <strong>
+              Moedas acumuladas:
+            </strong>
+            <strong style={{ justifySelf: "center", display: "flex", alignItems: "flex-end", marginTop: "10px" }}>
+              <BiCookie size={24} color="#ff9000" />
+              <strong style={{ paddingLeft: "8px" }}>
+                {user.balance}
+              </strong>
+            </strong>
+          </span>
         </Profile>
       </Content>
     </Container>

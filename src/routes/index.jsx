@@ -1,11 +1,12 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
 
-//import Route from './Route';
+import Route from './Route';
 
 import SignIn from '../pages/SignIn';
 import SignUp from '../pages/SignUp';
 
+import Profile from '../pages/Profile';
 import Dashboard from '../pages/Dashboard';
 import RegistrationGoals from '../pages/RegistrationGoals';
 import RegistrationAward from '../pages/RegistrationAward';
@@ -16,13 +17,15 @@ const Routes = () => {
       <Route path="/" exact component={SignIn} />
       <Route path="/signup" component={SignUp} />
 
-      <Route path="/dashboard" component={Dashboard} />
-      <Route path="/registrationGoals" component={RegistrationGoals} />
-      <Route path="/registrationAward" component={RegistrationAward} />
-
-
+      <Route path="/dashboard" component={Dashboard} isPrivate />
+      <Route path="/registrationGoals" component={RegistrationGoals} isPrivate />
+      <Route path="/registrationAward" component={RegistrationAward} isPrivate/>
+{/* 
+      <Route path="/profile" component={Dashboard} isPrivate />
+      <Route path="/dashboard" component={Profile} isPrivate /> */}
     </Switch>
   );
 };
 
 export default Routes;
+

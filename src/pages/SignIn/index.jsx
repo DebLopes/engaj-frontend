@@ -40,27 +40,30 @@ const SignIn  = () => {
           abortEarly: false,
         });
 
-        // await signIn({
-        //   email: data.email,
-        //   password: data.password,
-        // });
-
-        const response = await api.post('sessions', {
+        await signIn({
           email: data.email,
           password: data.password,
         });
+
+
+        console.log('a')
+        // const response = await api.post('sessions', {
+        //   email: data.email,
+        //   password: data.password,
+        // });
     
-        console.log(response.data)
-        const { token, user } = response.data;
+        //console.log(response.data)
+      //  const { token, user } = response.data;
     
-        localStorage.setItem('@Engaj:token', token);
-        localStorage.setItem('@Engaj:user', JSON.stringify(user));
+        // localStorage.setItem('@Engaj:token', token);
+        // localStorage.setItem('@Engaj:user', JSON.stringify(user));
     
       //  setData({ token, user });
 
         
         history.push('/dashboard');
       } catch (err) {
+        console.log('erro')
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
 
@@ -68,6 +71,7 @@ const SignIn  = () => {
 
           return;
         }
+
 
         // addToast({
         //   type: 'error',
@@ -83,7 +87,7 @@ const SignIn  = () => {
         <AnimationContainer>
 
           <Form ref={formRef} onSubmit={handleSubmit}>
-            <h1>Faça seu logon</h1>
+            <h1>Faça seu login</h1>
 
             <Input name="email" icon={FiMail} placeholder="E-mail" />
 
@@ -96,7 +100,7 @@ const SignIn  = () => {
 
             <Button type="submit">Entrar</Button>
 
-            <a href="forgot">Esqueci minha senha</a>
+            {/* <a href="forgot">Esqueci minha senha</a> */}
           </Form>
 
           <Link to="/signup">

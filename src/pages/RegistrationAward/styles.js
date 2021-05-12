@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import {
   SECONDARY_COLOR,
   STRONG_BACKGROUND_COLOR,
@@ -52,19 +52,11 @@ export const HeaderContent = styled.div`
 export const Profile = styled.div`
   display: flex;
   align-items: center;
-  margin-left: 80px;
-  flex-direction: column;
-
-  > strong {
-    margin-top: 10px;
-    max-width: 300px;
-    text-align: justify;
-    color: #f4ede8;
-  }
+  // margin-left: 80px;
 
   img {
-    width: 200px;
-    height: 200px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
   }
 
@@ -73,7 +65,7 @@ export const Profile = styled.div`
     flex-direction: column;
     margin-left: 16px;
     line-height: 24px;
-    margin-top: 20px;
+
     span {
       color: #f4ede8;
     }
@@ -290,6 +282,7 @@ export const TodoIst = styled.div`
     }
   }
 `;
+
 export const Modal = styled.div`
   position: absolute;
   top: 0;
@@ -301,14 +294,6 @@ export const Modal = styled.div`
   justify-content: center;
   z-index: 2000;
   width: 400px;
-  /* width: ${(props) => {
-    switch (props.size) {
-      case "lg":
-        return "800";
-      default:
-        return "480";
-    }
-  }}px; */
   margin: 40px auto;
 `;
 

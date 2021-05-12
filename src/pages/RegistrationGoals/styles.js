@@ -7,13 +7,6 @@ import {
   DARK_GRAYISH_ORANGE,
 } from "../../theme";
 
-export const ContainerGoal = styled.div`
-  display: flex;
-
-  //margin-bottom: 14px;
-`;
-
-
 export const Container = styled.div`
   display: flex;
   margin-bottom: 14px;
