@@ -75,7 +75,7 @@ const RegistrationAward = () => {
         abortEarly: false,
       });
 
-      var response = await RewardsService.CreateReward(data.description, data.value).then((r) => r.data);
+      await RewardsService.CreateReward(data.description, data.value).then((r) => r.data);
 
       setCreateAward(false);
 
@@ -169,7 +169,7 @@ const RegistrationAward = () => {
                   </Award>
                 ))
               )}
-            {rewards.length === 0 && <p>Nenhum recompensas cadastrada</p>}
+            {rewards.length === 0 && !createAward && <p>Nenhum recompensas cadastrada</p>}
           </Section>
           {isLevelUpModalOpen && (
             <TaskCompletedModal
