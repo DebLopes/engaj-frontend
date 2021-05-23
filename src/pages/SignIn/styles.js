@@ -1,6 +1,6 @@
 import styled, { keyframes } from "styled-components";
 import { shade } from "polished";
-import { SECONDARY_COLOR } from '../../theme';
+import { SECONDARY_COLOR } from "../../theme";
 
 import signInBackground from "../../assets/sign-up-background.jpg";
 
@@ -41,6 +41,10 @@ export const AnimationContainer = styled.div`
 
   animation: ${appearFromLeft} 1s;
 
+  img {
+    width: 40%;
+  }
+  
   form {
     margin: 80px 0;
     width: 340px;
@@ -51,23 +55,22 @@ export const AnimationContainer = styled.div`
     }
   }
 
-    a {
-      color: #f4ede8;
-      display: block;
-      margin-top: 24px;
-      text-decoration: none;
-      transition: color 0.2s;
+  a {
+    color: #f4ede8;
+    display: block;
+    margin-top: 24px;
+    text-decoration: none;
+    transition: color 0.2s;
 
-      &:hover {
-        color: ${shade(0.2, "#f4ede8")};
-      }
+    &:hover {
+      color: ${shade(0.2, "#f4ede8")};
     }
   }
 
   > a {
-    color:${SECONDARY_COLOR};
+    color: ${SECONDARY_COLOR};
     display: block;
-    margin-top: 24px;
+    margin-top: 10%;
     text-decoration: none;
     transition: color 0.2s;
 
@@ -79,7 +82,7 @@ export const AnimationContainer = styled.div`
     }
 
     &:hover {
-      color: ${shade(0.2, SECONDARY_COLOR)
+      color: ${shade(0.2, SECONDARY_COLOR)};
     }
   }
 `;
@@ -88,4 +91,21 @@ export const Background = styled.div`
   flex: 1;
   background: url(${signInBackground}) no-repeat center;
   background-size: cover;
+
+  span {
+    color: #f4ede8;
+    background-color: black;
+    padding: 5px;
+    border-radius: 4px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-size: 12px;
+
+    a {
+      padding-left: 5px;
+      padding-right: 5px;
+      color: ${SECONDARY_COLOR};
+    }
+  }
 `;

@@ -44,7 +44,7 @@ import React, {
           disabled={disable}
           ref={inputRef}
           {...rest}
-          type="text"
+         // type="text"
         />
         {error && (
           <Error title={error}>

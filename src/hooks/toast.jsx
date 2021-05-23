@@ -1,50 +1,50 @@
+import React, { createContext, useCallback, useContext, useState } from "react";
+import { v4 as uuid } from "uuid";
 
-import React, { createContext, useCallback, useContext, useState } from 'react';
-import { v4 as uuid } from 'uuid';
-
-import ToastContainer from '../components/ToastContainer';
+import ToastContainer from "../components/ToastContainer";
 
 const ToastContext = createContext({});
 
 const ToastProvider = ({ children }) => {
-	const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([]);
 
-	const addToast = useCallback(
-		({ type, title, description }) => {
-			const id = uuid();
+    const addToast = useCallback(
+      ({ type, title, description }) => {
+        const id = uuid();
+  
+        const toast = {
+          id,
+          type,
+          title,
+          description,
+        };
+  
+        setMessages(state => [...state, toast]);
+      },
+      [],
+    );
 
-			const toast = {
-				id,
-				type,
-				title,
-				description,
-			};
+    const removeToast = useCallback((id) => {
+      setMessages(state => state.filter(message => message.id !== id));
+    }, []);
 
-			setMessages(state => [...state, toast]);
-		},
-		[],
-	);
-
-	const removeToast = useCallback((id) => {
-		setMessages(state => state.filter(message => message.id !== id));
-	}, []);
-
-	return (
-		<ToastContext.Provider value={{ addToast, removeToast }}>
-			{children}
-			<ToastContainer messages={messages} />
-		</ToastContext.Provider>
-	);
+  
+  return (
+    <ToastContext.Provider value={{ addToast, removeToast }}>
+      {children}
+      <ToastContainer messages={messages} />
+    </ToastContext.Provider>
+  );
 };
 
 function useToast() {
-	const context = useContext(ToastContext);
+  const context = useContext(ToastContext);
 
-	if (!context) {
-		throw new Error('useToast must be used within an ToastProvider');
-	}
+  if (!context) {
+    throw new Error("useToast must be used within an ToastProvider");
+  }
 
-	return context;
+  return context;
 }
 
 export { ToastProvider, useToast };

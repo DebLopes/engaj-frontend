@@ -1,8 +1,6 @@
 import React, { createContext, useCallback, useContext, useState } from 'react';
 import api from '../services/api';
 
-import profile from "../assets/profile.png";
-
 const AuthContext = createContext({});
 
 const AuthProvider = ({ children }) => {
@@ -18,16 +16,13 @@ const AuthProvider = ({ children }) => {
   });
 
   const signIn = async ({ email, password }) => {
-    console.log('signIn')
-
-    const response = await api.post('sessions', {
+     const response = await api.post('sessions', {
       email,
       password,
     });
 
     const { token, user } = response.data;
 
-    user.avatar_url = profile;
     localStorage.setItem('@Engaj:token', token);
     localStorage.setItem('@Engaj:user', JSON.stringify(user));
 
@@ -44,7 +39,6 @@ const AuthProvider = ({ children }) => {
   const updateUser = useCallback(
     (user) => {
       localStorage.setItem('@Engaj:user', JSON.stringify(user));
-      user.avatar_url = profile;
 
       setData({
         token: data.token,

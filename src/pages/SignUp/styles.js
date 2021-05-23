@@ -19,7 +19,6 @@ export const Content = styled.div`
 
   width: 100%;
   max-width: 700px;
-  }
 `;
 
 const appearFromRight = keyframes`
@@ -42,6 +41,10 @@ export const AnimationContainer = styled.div`
 
   animation: ${appearFromRight} 1s;
 
+  img {
+    width: 40%;
+  }
+  
   form {
     margin: 80px 0;
     width: 340px;
@@ -63,12 +66,12 @@ export const AnimationContainer = styled.div`
         color: ${shade(0.2, '#f4ede8')};
       }
     }
-  }
+  
 
   > a {
     color:${SECONDARY_COLOR};
     display: block;
-    margin-top: 24px;
+    margin-top: 10%;
     text-decoration: none;
     transition: color 0.2s;
 
@@ -82,10 +85,26 @@ export const AnimationContainer = styled.div`
     &:hover {
       color: ${shade(0.2, SECONDARY_COLOR)};
     }
+  }
 `;
 
 export const Background = styled.div`
   flex: 1;
   background: url(${signUpBackground}) no-repeat center;
   background-size: cover;
+  span {
+    color: #f4ede8;
+    background-color: black;
+    padding: 5px;
+    border-radius: 4px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    font-size: 12px;
+    a {
+      padding-left: 5px;
+      padding-right: 5px;
+      color: ${SECONDARY_COLOR};
+    }
+  }
 `;

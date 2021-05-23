@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import signInBackground from "../../assets/levelup.svg";
-import {LIGHT_BACKGROUND_COLOR} from '../../theme';
+import { LIGHT_BACKGROUND_COLOR } from "../../theme";
 
-export const Modal = styled.div`
+export const Container = styled.div`
   background: rgba(242, 243, 245, 0.8);
   position: fixed;
   top: 0;
@@ -40,6 +40,11 @@ export const Modal = styled.div`
       font-size: 1.25rem;
       color: var(--text);
       margin-top: 0.25rem;
+      display: flow-root;
+      svg {
+        vertical-align: top;
+        margin-left: 5px;
+      }
     }
 
     button {

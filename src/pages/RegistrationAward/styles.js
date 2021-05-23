@@ -347,14 +347,14 @@ export const Award = styled.div`
 export const CreateAward = styled.button`
   display: flex;
   align-items: center;
-  color: ${SECONDARY_COLOR};
+  color:  ${props => props.disabled ? '#999591' : SECONDARY_COLOR};
   text-decoration: none;
   font-size: 16px;
   background-color: transparent;
   border: 0;
 
   SVG {
-    color: ${SECONDARY_COLOR};
+    color:  ${props => props.disabled ? '#999591' : SECONDARY_COLOR};
     margin-right: 5px;
     width: 20px;
     height: 20px;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FiEdit2, FiPlus, FiTrash } from "react-icons/fi";
+import { FiPlus, FiTrash } from "react-icons/fi";
 import "react-day-picker/lib/style.css";
 import Input from "../../components/Input";
 import {
@@ -30,7 +30,7 @@ const Actions = (props) => {
         </ListActions>
       ))}
       <RegisterNewTask>
-        <Input name="action" placeholder="Informe a tarefa" />
+        <Input name="action" placeholder="Informe a tarefa"  />
         <button type="submit" onClick={() => setAddFieldsOfTask(true)}>
           <FiPlus strokeWidth={2} />
         </button>

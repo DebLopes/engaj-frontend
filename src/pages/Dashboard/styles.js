@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import {
   SECONDARY_COLOR,
   STRONG_BACKGROUND_COLOR,
@@ -185,6 +185,7 @@ export const Goals = styled.div`
   padding: 16px;
   background: ${VERY_DARK_GRAYISH_BLUE_COLOR};
   border-radius: 10px;
+  width: 65vw;
 
   & + div {
     margin-top: 16px;
@@ -312,14 +313,14 @@ export const Modal = styled.div`
   justify-content: center;
   z-index: 2000;
   width: 400px;
-  /* width: ${(props) => {
+  width: ${(props) => {
     switch (props.size) {
       case "lg":
         return "800";
       default:
         return "480";
     }
-  }}px; */
+  }}px;
   margin: 40px auto;
 `;
 

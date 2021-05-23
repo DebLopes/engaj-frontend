@@ -9,7 +9,6 @@ import {
 import { useToast } from '../../../hooks/toast';
 import { Container } from './styles';
 
-
 const icons = {
   info: <FiInfo size={24} />,
   success: <FiCheckCircle size={24} />,
@@ -21,24 +20,24 @@ const Toast = ({ message, style }) => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      removeToast(message && message.id);
+      removeToast( message.id);
     }, 3000);
 
     return () => {
       clearTimeout(timer);
     };
-  }, [removeToast, message]);
+  }, [removeToast, message.id]);
 
   return (
     <Container
       type={message && message.type}
-      hasDescription={!!(message && message.description)}
+      hasDescription={!! message.description}
       style={style}
     >
-      {icons[(message && message.type) || 'info']}
-      <div>
-        <strong>{message && message.title}</strong>
-        {message && message.description && <p>{message && message.description}</p>}
+      {icons[ message.type || 'info']}
+      <div> 
+        <strong>{ message.title}</strong>
+        {message.description && <p>{message.description}</p>}
       </div>
 
       <button type="button" onClick={() => removeToast(message && message.id)}>

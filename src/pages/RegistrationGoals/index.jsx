@@ -2,71 +2,67 @@ import React, { useMemo, useState, useRef } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { format } from "date-fns";
 import ptBR from "date-fns/locale/pt-BR";
-import { FiPower } from "react-icons/fi";
 import DayPicker, { DateUtils } from "react-day-picker";
 import "react-day-picker/lib/style.css";
 import Actions from "./Actions";
 import { Form } from "@unform/web";
-import * as Yup from 'yup';
+import * as Yup from "yup";
 import GoalsService from "../../services/GoalsService";
-import { useAuth } from '../../hooks/auth';
-import { BiCookie } from "react-icons/bi";
 
-import getValidationErrors from '../../utils/getValidationErrors';
+import Header from "../../components/Header";
+import getValidationErrors from "../../utils/getValidationErrors";
 
 import {
-  Header,
-  HeaderContent,
-  Profile,
   Content,
   Schedule,
   Section,
-  Calendar,
-  Menu,
+  Calendar
 } from "./styles";
 import InputsForRegistration from "../../components/InputsForRegistration";
 import Button from "../../components/Button";
 import { v4 as uuidv4 } from "uuid";
 
-
 const RegistrationGoals = () => {
-  const { signOut, user } = useAuth();
-
   const formRef = useRef(null);
 
   const history = useHistory();
 
   const [actions, setActions] = useState([]);
-
   const [addFieldsOfTask, setAddFieldsOfTask] = useState(false);
-  const [removeFieldsOfTask, setRemoveFieldsOfTask] = useState({ remove: false, id: '' });
+  const [removeFieldsOfTask, setRemoveFieldsOfTask] = useState({
+    remove: false,
+    id: "",
+  });
 
   const [from, setFrom] = useState(new Date());
   const [to, setTo] = useState(new Date());
 
   const selectedDateAsText = useMemo(() => {
-    return format(from, "'Dia' dd 'de' MMMM  - cccc", {
-      locale: ptBR,
-    });
+    return (
+      from &&
+      format(from, "'Dia' dd 'de' MMMM  - cccc", {
+        locale: ptBR,
+      })
+    );
   }, [from]);
 
   const selectedDateAsTextEnd = useMemo(() => {
-    return format(to, "'Dia' dd 'de' MMMM - cccc", {
-      locale: ptBR,
-    });
+    return (
+      to &&
+      format(to, "'Dia' dd 'de' MMMM - cccc", {
+        locale: ptBR,
+      })
+    );
   }, [to]);
 
   const handleGoal = async (data) => {
-
     try {
       formRef.current?.setErrors({});
 
       switch (true) {
         case addFieldsOfTask:
-
           const schema = Yup.object().shape({
-            action: Yup.string()
-              .required('Descrição obrigatório'),
+            action: Yup.string().required("Descrição obrigatório"),
           });
 
           await schema.validate(data, {
@@ -85,19 +81,20 @@ const RegistrationGoals = () => {
           setAddFieldsOfTask(false);
           break;
         case removeFieldsOfTask.remove:
-          setActions([...actions].filter((i) => i.id !== removeFieldsOfTask.id));
-          setRemoveFieldsOfTask({ remove: false, id: '' });
+          setActions(
+            [...actions].filter((i) => i.id !== removeFieldsOfTask.id)
+          );
+          setRemoveFieldsOfTask({ remove: false, id: "" });
           break;
         default:
           const schemaGoal = Yup.object().shape({
             titleGoal: Yup.string()
-              .required('Titulo obrigatório')
-              .min(6, 'No mínimo 6 dígitos'),
-            description: Yup.string()
-              .required('Descrição obrigatório'),
+              .required("Titulo obrigatório")
+              .min(6, "No mínimo 6 dígitos"),
+            description: Yup.string().required("Descrição obrigatório"),
             points: Yup.number()
-              .typeError('Informe um número. Ex: 5')
-              .min(1, 'Valor minimo é 1')
+              .typeError("Informe um número. Ex: 5")
+              .min(1, "Valor minimo é 1"),
           });
 
           await schemaGoal.validate(data, {
@@ -113,10 +110,9 @@ const RegistrationGoals = () => {
             actions ? actions.map((t) => t.action) : []
           );
 
-          history.push('/dashboard');
+          history.push("/dashboard");
           break;
       }
-
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
@@ -126,39 +122,17 @@ const RegistrationGoals = () => {
         return;
       }
     }
-  }
+  };
 
   return (
     <div>
       <Header>
-        <HeaderContent>
-          <Profile>
-            <img src={user.avatar_url} alt={user.name} />
-            <div>
-              <span>Bem vindo,</span>
-              <Link to="/profile">
-                <strong>{user.name}</strong>
-              </Link>
-              <strong style={{ justifySelf: "center", display: "flex", alignItems: "flex-end", marginTop: "10px" }}>
-                <BiCookie size={24} color="#ff9000" />
-                <strong style={{ paddingLeft: "8px" }}>
-                  {user.balance}
-                </strong>
-              </strong>
-            </div>
-          </Profile>
-          <Menu>
-            <Link to="/dashboard">
-              <strong>Metas</strong>
-            </Link>
-            <Link to="/registrationAward">
-              <strong>Recompensas</strong>
-            </Link>
-          </Menu>
-          <button type="button" onClick={signOut}>
-            <FiPower />
-          </button>
-        </HeaderContent>
+        <Link to="/dashboard">
+          <strong>Metas</strong>
+        </Link>
+        <Link to="/registrationAward">
+          <strong>Recompensas</strong>
+        </Link>
       </Header>
 
       <Content>
