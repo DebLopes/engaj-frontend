@@ -60,8 +60,8 @@ const RegistrationGoals = () => {
   }, [to]);
 
   const handleGoal = async (data) => {
-    setDisabledButton(true);
     try {
+      setDisabledButton(true);
       formRef.current?.setErrors({});
 
       switch (true) {
@@ -119,7 +119,7 @@ const RegistrationGoals = () => {
               .nullable(),
           });
 
-    
+
           await schemaTask.validate({to , from, actions}, {
             abortEarly: false,
           });
@@ -136,9 +136,8 @@ const RegistrationGoals = () => {
           history.push("/dashboard");
           break;
       }
-
-      setDisabledButton(false);
     } catch (err) {
+      setDisabledButton(false);
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
  
@@ -171,6 +170,7 @@ const RegistrationGoals = () => {
         return;
       }
     }
+
   };
 
   return (
