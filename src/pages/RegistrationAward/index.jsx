@@ -1,11 +1,18 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
+
 import { FiPlus, FiMinus } from "react-icons/fi";
 import { BiCookie } from "react-icons/bi";
+import { FaTrophy } from "react-icons/fa";
+
 import InputsForRegistration from "../../components/InputsForRegistration";
 import Modal from "../../components/Modal";
 import { Form } from "@unform/web";
 import * as Yup from "yup";
+
+import { toastType } from "../../utils/constants";
+
+import { useToast } from "../../hooks/toast";
 import { useAuth } from "../../hooks/auth";
 import RewardsService from "../../services/RewardsService";
 
@@ -24,9 +31,10 @@ import Button from "../../components/Button";
 import { Default } from "react-spinners-css";
 
 const RegistrationAward = () => {
-  const { updateUser } = useAuth();
+  const { addToast } = useToast();
+  const { updateUser, user } = useAuth();
 
-  const [isLevelUpModalOpen, setIsLevelUpModalOpen] = useState(false);
+  const [isLevelUpModalOpen, setIsLevelUpModalOpen] = useState(null);
   const [createAward, setCreateAward] = useState(false);
   const [rewards, setRewards] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,9 +52,23 @@ const RegistrationAward = () => {
     listReward();
   }, []);
 
-  const handlerRecue = async (id) => {
+  const handlerRecue = async (reward) => {
     try {
-      const response = await RewardsService.RecueAward(id).then((r) => r.data);
+      if(reward.value > user.balance)
+      {
+        addToast({
+          type: toastType.error,
+          title: "Erro ao resgatar recompensa",
+          description: "Você não possui pontos o suficiente para resgatar essa recompensa",
+        });
+
+        return;
+      }
+
+      const response = await RewardsService.RecueAward(reward.id).then(
+        (r) => r.data
+      );
+      setIsLevelUpModalOpen(reward);
       updateUser(response);
     } catch (err) {
       console.log(err);
@@ -88,7 +110,7 @@ const RegistrationAward = () => {
     }
   };
 
-  const loadingComponent  = (
+  const loadingComponent = (
     <div
       style={{
         justifyContent: "center",
@@ -98,6 +120,41 @@ const RegistrationAward = () => {
       <Default color="#ff9000" size={200} />
     </div>
   );
+
+  const tree = () => {
+    if (loading) return loadingComponent;
+
+    if (createAward)
+      return (
+        <Form ref={formRef} key="1" onSubmit={handleAward}>
+          <InputsForRegistration
+            nameFirstInput="description"
+            placeholderFirstInput="Descrição recompensa"
+            nameSecondInput="value"
+            placeholderSecondInput="Pontuação"
+            nameTextArea=""
+            placeholderTextArea=""
+          />
+          <Button type="submit">Salvar</Button>
+        </Form>
+      );
+
+    if (rewards.length === 0 && !createAward && !loading)
+      return <p>Nenhum recompensas cadastrada</p>;
+
+    return rewards.map((reward) => (
+      <Award key={reward.id}>
+        <span>{reward.description}</span>
+        <p>
+          <BiCookie size={20} />
+          {reward.value}
+        </p>
+        <button type="submit" onClick={() => handlerRecue(reward)}>
+          Resgatar recompensa
+        </button>
+      </Award>
+    ));
+  };
 
   return (
     <Container>
@@ -124,50 +181,26 @@ const RegistrationAward = () => {
               ) : (
                 <>
                   <strong>{rewards.length} Recompensas Cadastradas</strong>
-                 
-                    <CreateAward onClick={() => setCreateAward(true)} disabled={loading}>
-                      <FiPlus /> Criar nova recompensa
-                    </CreateAward>
-          
+
+                  <CreateAward
+                    onClick={() => setCreateAward(true)}
+                    disabled={loading}
+                  >
+                    <FiPlus /> Criar nova recompensa
+                  </CreateAward>
                 </>
               )}
             </div>
-
-            {createAward ? (
-              <Form ref={formRef} key="1" onSubmit={handleAward}>
-                <InputsForRegistration
-                  nameFirstInput="description"
-                  placeholderFirstInput="Descrição recompensa"
-                  nameSecondInput="value"
-                  placeholderSecondInput="Pontuação"
-                  nameTextArea=""
-                  placeholderTextArea=""
-                />
-                <Button type="submit">Salvar</Button>
-              </Form>
-            ) : (
-              rewards.map((reward) => (
-                <Award key={reward.id}>
-                  <span>{reward.description}</span>
-                  <p>
-                    <BiCookie size={20} />
-                    {reward.value}
-                  </p>
-                  <button type="submit" onClick={() => handlerRecue(reward.id)}>
-                    Resgatar recompensa
-                  </button>
-                </Award>
-              ))
-            )}
-            {loading && loadingComponent}
-            {rewards.length === 0 && !createAward && !loading && (
-              <p>Nenhum recompensas cadastrada</p>
-            )}
+            {tree()}
           </Section>
           {isLevelUpModalOpen && (
-            <Modal
-              close={() => setIsLevelUpModalOpen(false)}
-            />
+            <Modal close={() => setIsLevelUpModalOpen(null)}>
+              <header>
+                <FaTrophy />
+              </header>
+              <strong>Parabéns</strong>
+              <p>Você resgatou a recompensa {isLevelUpModalOpen.description}</p>
+            </Modal>
           )}
         </Schedule>
       </Content>

@@ -31,7 +31,6 @@ class GoalsService {
 
   async UpdateTask(id) {
     const response = await api.patch(`goals/${id}`);
-    console.log(response)
     return response;
   }
 }

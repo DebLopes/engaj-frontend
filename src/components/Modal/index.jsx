@@ -8,7 +8,7 @@ const Modal = props => {
       <div>
         {props.children}                        
         <button type="button" onClick={close}>
-          <img src="/icons/close.svg" />
+          <img src="/icons/close.svg" alt='close'/>
         </button>
       </div>
     </Container>

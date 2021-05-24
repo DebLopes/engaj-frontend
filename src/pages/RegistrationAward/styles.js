@@ -318,6 +318,8 @@ export const Award = styled.div`
 
   p {
     margin: 0px;
+    margin-left: auto;
+    margin-right: 15%;
     svg {
       margin-right: 5px;
     }
@@ -325,6 +327,8 @@ export const Award = styled.div`
 
   span {
     align-self: center;
+    max-width: 45%;
+    text-align: justify;
   }
 
   > button {

@@ -9,6 +9,9 @@ import { Form } from "@unform/web";
 import * as Yup from "yup";
 import GoalsService from "../../services/GoalsService";
 
+import { useToast } from "../../hooks/toast";
+import { toastType } from "../../utils/constants";
+
 import Header from "../../components/Header";
 import getValidationErrors from "../../utils/getValidationErrors";
 
@@ -24,8 +27,9 @@ import { v4 as uuidv4 } from "uuid";
 
 const RegistrationGoals = () => {
   const formRef = useRef(null);
-
+  const { addToast } = useToast();
   const history = useHistory();
+  const [disabledButton, setDisabledButton] = useState(false);
 
   const [actions, setActions] = useState([]);
   const [addFieldsOfTask, setAddFieldsOfTask] = useState(false);
@@ -56,6 +60,7 @@ const RegistrationGoals = () => {
   }, [to]);
 
   const handleGoal = async (data) => {
+    setDisabledButton(true);
     try {
       formRef.current?.setErrors({});
 
@@ -89,15 +94,33 @@ const RegistrationGoals = () => {
         default:
           const schemaGoal = Yup.object().shape({
             titleGoal: Yup.string()
-              .required("Titulo obrigatório")
-              .min(6, "No mínimo 6 dígitos"),
-            description: Yup.string().required("Descrição obrigatório"),
+              .required("Titulo obrigatório"),
+            description: Yup.string()
+              .required("Descrição obrigatório"),
             points: Yup.number()
               .typeError("Informe um número. Ex: 5")
               .min(1, "Valor minimo é 1"),
           });
-
+          
           await schemaGoal.validate(data, {
+            abortEarly: false,
+          });
+
+          const schemaTask = Yup.object().shape({
+            to: Yup.date()
+              .required()
+              .typeError("Data de fim obrigatória"),
+            from: Yup.date()
+              .required()
+              .typeError("Data de inicio obrigatória"),
+            actions: Yup.array()
+              .min(1, "Adicione uma tarefa.")
+              .required("É preciso adicicionar no minimo uma tarefa.")
+              .nullable(),
+          });
+
+    
+          await schemaTask.validate({to , from, actions}, {
             abortEarly: false,
           });
 
@@ -113,11 +136,37 @@ const RegistrationGoals = () => {
           history.push("/dashboard");
           break;
       }
+
+      setDisabledButton(false);
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
-
+ 
         formRef.current?.setErrors(errors);
+
+        if(errors.to){
+          addToast({
+            type: toastType.error,
+            title: "Erro ao criar meta",
+            description: errors.to
+          });
+        }
+
+        if(errors.from){
+          addToast({
+            type: toastType.error,
+            title: "Erro ao criar meta",
+            description: errors.from
+          });
+        }
+
+        if(errors.actions){
+          addToast({
+            type: toastType.error,
+            title: "Erro ao criar meta",
+            description: errors.actions
+          });
+        }
 
         return;
       }
@@ -161,7 +210,7 @@ const RegistrationGoals = () => {
               />
             </Section>
 
-            <Button type="submit">Salvar Meta</Button>
+            <Button type="submit" disabled={disabledButton} >Salvar Meta</Button>
           </Form>
         </Schedule>
 

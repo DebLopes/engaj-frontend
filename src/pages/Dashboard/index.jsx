@@ -27,7 +27,10 @@ import {
   Goals,
   GoalsTitle,
   ProgressBar,
+  Label,
+  GoalsHeader,
 } from "./styles";
+import { date } from "yup/lib/locale";
 
 const Dashboard = () => {
   const { updateUser, user } = useAuth();
@@ -48,7 +51,7 @@ const Dashboard = () => {
     } catch (err) {
       addToast({
         type: toastType.error,
-        title: "Não foi possível excluir a meta"
+        title: "Não foi possível excluir a meta",
       });
       console.log(err);
     }
@@ -59,19 +62,35 @@ const Dashboard = () => {
       setLoading(true);
       setGoals([]);
       const response = await GoalsService.ListGoals().then((r) => r.data);
-      setGoals(response);
+      const order = response.sort((a, b) => {
+        if (a.tasks &&
+          a.tasks.some((x) => x.done)) {
+          return -1;
+        }
+    
+        if (b.tasks &&
+          b.tasks.some((x) => x.done)) {
+          return -1;
+        }
+
+        const dateA = new Date(a.startDate),
+          dateB = new Date(b.startDate);
+        return dateA - dateB;
+      });
+
+      setGoals(order);
       setLoading(false);
     };
 
     if (loading) listGoals();
   }, [loading]);
 
-
   const handleCheck = async (task) => {
     try {
       const response = await GoalsService.UpdateTask(task.id).then(
         (r) => r.data
       );
+
       setLoading(true);
 
       if (user.balance === response.balance) {
@@ -156,27 +175,34 @@ const Dashboard = () => {
 
                 {goals.map((goal) => (
                   <Goals key={goal.id}>
-                    {progressBar(
-                      goal.tasks && goal.tasks.filter((x) => x.done).length,
-                      goal.tasks && goal.tasks.length
-                    )}
-                    
+                    <GoalsHeader>
+                      {progressBar(
+                        goal.tasks && goal.tasks.filter((x) => x.done).length,
+                        goal.tasks && goal.tasks.length
+                      )}
+                      <span>
+                        {dateTextEnd(goal.startDate, goal.endDate)}
+                        <button onClick={() => deleteGoal(goal.id)}>
+                          <FiTrash2 size={20} />
+                        </button>
+                      </span>
+                    </GoalsHeader>
                     <GoalsTitle>
                       <span>
                         <FiFlag size={20} />
                         {goal.title}
                       </span>
-                      {dateTextEnd(goal.startDate, goal.endDate)}
-                      <button onClick={() => deleteGoal(goal.id)}>
-                        <FiTrash2 size={20} />
-                      </button>
+                      <span>
+                        <strong>{goal.points}</strong>
+                        <BiCookie color="#ff9000" size={20} />
+                      </span>
                     </GoalsTitle>
                     <p>{goal.description}</p>
                     <h6>Tarefas</h6>
                     {goal.tasks &&
                       goal.tasks.map((task, index) => (
                         <div>
-                          <label>
+                          <Label>
                             <Checkbox
                               disabled={task.done}
                               checked={task.done}
@@ -185,7 +211,7 @@ const Dashboard = () => {
                             <span style={{ marginLeft: 8 }}>
                               {task.description}
                             </span>
-                          </label>
+                          </Label>
                         </div>
                       ))}
                   </Goals>
@@ -194,9 +220,7 @@ const Dashboard = () => {
             )}
           </Section>
           {!!isTaskCompletedModalOpen && (
-            <Modal
-              close={() => setTaskCompletedModalOpen(null)}
-            >
+            <Modal close={() => setTaskCompletedModalOpen(null)}>
               <header>
                 <FaTrophy />
               </header>

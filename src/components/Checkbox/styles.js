@@ -2,8 +2,8 @@ import styled from 'styled-components';
 import { SECONDARY_COLOR } from '../../theme';
 
 export const CheckboxContainer = styled.div`
-  display: inline-block;
   vertical-align: middle;
+  margin-top: 5px;
 `
 
 export const Icon = styled.svg`

@@ -182,10 +182,10 @@ export const Accordion = styled.div`
 export const Goals = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 16px;
+  padding: 30px;
   background: ${VERY_DARK_GRAYISH_BLUE_COLOR};
   border-radius: 10px;
-  width: 65vw;
+  width: 100%;
 
   & + div {
     margin-top: 16px;
@@ -195,6 +195,7 @@ export const Goals = styled.div`
     color: #999591;
     font-size: 14px;
     text-align: justify;
+    word-spacing: 2px;
   }
 
   h6 {
@@ -241,20 +242,15 @@ export const GoalsTitle = styled.div`
   display: flex;
   align-items: center;
   padding-bottom: 10px;
+  justify-content: space-between;
+
   span {
     display: flex;
-    flex: 1;
     color: #f4ede8;
     SVG {
       color: ${SECONDARY_COLOR};
-      margin-right: 20px;
-    }
-  }
-  button {
-    margin: 0;
-    SVG {
-      color: ${SECONDARY_COLOR};
-      margin-left: 20px;
+      margin-left: 2px;
+      margin-right: 5px;
     }
   }
 `;
@@ -262,7 +258,7 @@ export const GoalsTitle = styled.div`
 export const ProgressBar = styled.div`
   display: flex;
   align-items: center;
-  padding-bottom: 20px;
+  padding-bottom: 5px;
   width: 40%;
   span {
     font-size: 14px;
@@ -333,9 +329,34 @@ export const Menu = styled.div`
     margin-right: 30px;
     text-decoration: none;
     color: ${SECONDARY_COLOR};
-    
+
     &:hover {
       opacity: 0.8;
+    }
+  }
+`;
+
+export const Label = styled.label`
+  display: flex;
+  padding-bottom: 5px;
+  span {
+    text-align: justify;
+  }
+`;
+
+export const GoalsHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  span {
+    display: flex;
+    color: #f4ede8;
+    button {
+      margin: 0;
+      align-items: flex-start;
+      SVG {
+        color: ${SECONDARY_COLOR};
+        margin-left: 15px;
+      }
     }
   }
 `;
