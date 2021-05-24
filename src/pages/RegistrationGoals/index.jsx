@@ -61,7 +61,7 @@ const RegistrationGoals = () => {
 
   const handleGoal = async (data) => {
     try {
-      setDisabledButton(true);
+
       formRef.current?.setErrors({});
 
       switch (true) {
@@ -92,6 +92,7 @@ const RegistrationGoals = () => {
           setRemoveFieldsOfTask({ remove: false, id: "" });
           break;
         default:
+          setDisabledButton(true);
           const schemaGoal = Yup.object().shape({
             titleGoal: Yup.string()
               .required("Titulo obrigatório"),
@@ -136,6 +137,7 @@ const RegistrationGoals = () => {
           history.push("/dashboard");
           break;
       }
+
     } catch (err) {
       setDisabledButton(false);
       if (err instanceof Yup.ValidationError) {
